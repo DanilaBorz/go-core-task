@@ -1,0 +1,473 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>1: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">go-core-task/1/main_1.go (32.4%)</option>
+				
+				<option value="file1">go-core-task/2/main_2.go (52.0%)</option>
+				
+				<option value="file2">go-core-task/3/main_3.go (42.3%)</option>
+				
+				<option value="file3">go-core-task/4/main_4.go (66.7%)</option>
+				
+				<option value="file4">go-core-task/5/main_5.go (66.7%)</option>
+				
+				<option value="file5">go-core-task/6/main_6.go (66.7%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">// Задание 1
+// Напишите программу на Go, которая:
+
+// Создает несколько переменных различных типов данных:
+// int (три числа в десятичной, восьмеричной и шеснадцатиричной системах)
+// float64
+// string
+// bool
+// complex64
+// Определяет тип каждой переменной и выводит его на экран.
+// Преобразует все переменные в строковый тип и объединяет их в одну строку.
+// Преобразовать эту строку в срез рун.
+// Захэшировать этот срез рун SHA256, добавив в середину соль "go-2024" и вывести результат.
+// Напишите unit тесты к созданным функциям
+// Напишите main функцию, в которой протестируете весь вышеописанный функционал. Выведите результаты на экран.
+
+// Входные числа из пункта 1 могут быть:
+
+// var numDecimal int = 42           // Десятичная система
+// var numOctal int = 052            // Восьмеричная система
+// var numHexadecimal int = 0x2A     // Шестнадцатиричная система
+// var pi float64 = 3.14             // Тип float64
+// var name string = "Golang"         // Тип string
+// var isActive bool = true           // Тип bool
+// var complexNum complex64 = 1 + 2i  // Тип complex64
+package main
+
+import (
+        "crypto/sha256"
+        "fmt"
+)
+
+func main() <span class="cov0" title="0">{
+        testValues()
+}</span>
+
+func getType(v interface{}) string <span class="cov8" title="1">{
+        return fmt.Sprintf("%T", v)
+}</span>
+
+func combineToString(values ...interface{}) string <span class="cov8" title="1">{
+        var result string
+        for _, v := range values </span><span class="cov8" title="1">{
+                result += fmt.Sprintf("%v", v)
+        }</span>
+        <span class="cov8" title="1">return result</span>
+}
+
+func hashWithSalt(runes []rune, salt string) string <span class="cov8" title="1">{
+        mid := len(runes) / 2
+        hasher := sha256.New()
+        leftPart := string(runes[:mid])
+        rightPart := string(runes[mid:])
+        hasher.Write([]byte(leftPart + salt + rightPart))
+        return fmt.Sprintf("%x", hasher.Sum(nil))
+}</span>
+
+func testValues() <span class="cov0" title="0">{
+        var numDecimal = 42               // Десятичная система
+        var numOctal = 052                // Восьмеричная система (42)
+        var numHexadecimal = 0x2A         // Шестнадцатиричная система (42)
+        var pi = 3.14                     // Тип float64
+        var name = "Golang"               // Тип string
+        var isActive = true               // Тип bool
+        var complexNum complex64 = 1 + 2i // Тип complex64
+
+        fmt.Println("Типы переменных")
+        fmt.Printf("numDecimal (%d): %s\n", numDecimal, getType(numDecimal))
+        fmt.Printf("numOctal (%d): %s\n", numOctal, getType(numOctal))
+        fmt.Printf("numHexadecimal (%d): %s\n", numHexadecimal, getType(numHexadecimal))
+        fmt.Printf("pi (%.2f): %s\n", pi, getType(pi))
+        fmt.Printf("name (%s): %s\n", name, getType(name))
+        fmt.Printf("isActive (%t): %s\n", isActive, getType(isActive))
+        fmt.Printf("complexNum (%.1f%+.1fi): %s\n", real(complexNum), imag(complexNum), getType(complexNum))
+
+        combined := combineToString(numDecimal, numOctal, numHexadecimal, pi, name, isActive, complexNum)
+        fmt.Printf("\nОбъединенная строка: %s\n", combined)
+
+        runes := []rune(combined)
+        fmt.Printf("Срез рун: %v\n", runes)
+        fmt.Printf("Длина среза рун: %d\n", len(runes))
+
+        hashed := hashWithSalt(runes, "go-2024")
+        fmt.Printf("\nSHA256 хэш с солью 'go-2024': %s\n", hashed)
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import (
+        "fmt"
+        "math/rand"
+)
+
+// Задание 2
+// Создайте слайс целых чисел originalSlice, содержащий 10 произвольных
+//  значений, которые генерируются случайным образом (при каждом запуске должны получаться новые значения)
+
+// Напишите функцию sliceExample, которая принимает слайс
+//  и возвращает новый слайс, содержащий только четные числа из исходного слайса.
+
+// Напишите функцию addElements, которая принимает слайс и число. Функция должна
+//  добавлять это число в конец слайса и возвращать новый слайс.
+
+// Напишите функцию copySlice, которая принимает слайс и возвращает его копию. Убедитесь,
+// что изменения в оригинальном слайсе не влияют на его копию.
+
+// Напишите функцию removeElement, которая принимает слайс и индекс элемента, который нужно
+// удалить. Функция должна возвращать новый слайс без элемента по указанному индексу.
+
+// Напишите main функцию, в которой протестируете все вышеописанные функции.
+// Выведите результаты на экран.
+
+// Напишите unit тесты к созданным функциям
+// Примечание. В качестве originalSlice можно использовать originalSlice := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+func sliceExample(s []int) []int <span class="cov8" title="1">{
+        var evenNumbers []int
+        for _, num := range s </span><span class="cov8" title="1">{
+                if num%2 == 0 </span><span class="cov8" title="1">{
+                        evenNumbers = append(evenNumbers, num)
+                }</span>
+        }
+        <span class="cov8" title="1">return evenNumbers</span>
+}
+
+func addElements(s []int, element int) []int <span class="cov8" title="1">{
+        return append(s, element)
+}</span>
+
+func copySlice(s []int) []int <span class="cov8" title="1">{
+        copied := make([]int, len(s))
+        copy(copied, s)
+        return copied
+}</span>
+
+func removeElement(s []int, index int) []int <span class="cov8" title="1">{
+        result := make([]int, 0, len(s)-1)
+        result = append(result, s[:index]...)
+        result = append(result, s[index+1:]...)
+        return result
+}</span>
+
+func main() <span class="cov0" title="0">{
+        originalSlice := []int{}
+        for i := 0; i &lt; 10; i++ </span><span class="cov0" title="0">{
+                originalSlice = append(originalSlice, rand.Intn(100))
+        }</span>
+        <span class="cov0" title="0">fmt.Println("Original Slice:", originalSlice)
+
+        evenSlice := sliceExample(originalSlice)
+        fmt.Println("Even Numbers:", evenSlice)
+
+        newSlice := addElements(originalSlice, 42)
+        fmt.Println("After Adding Element:", newSlice)
+
+        copiedSlice := copySlice(originalSlice)
+        fmt.Println("Copied Slice:", copiedSlice)
+
+        removedElementSlice := removeElement(originalSlice, 2)
+        fmt.Println("After Removing Element at Index 2:", removedElementSlice)</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package main
+
+// Задание 3
+// Реализуйте структуру данных StringIntMap, которая будет использоваться для хранения пар "строка - целое число". Ваша структура должна поддерживать следующие операции:
+
+// Добавление элемента: Метод Add(key string, value int),
+// который добавляет новую пару "ключ-значение" в карту.
+
+// Удаление элемента: Метод Remove(key string),
+// который удаляет элемент по ключу из карты.
+
+// Копирование карты: Метод Copy() map[string]int,
+// который возвращает новую карту, содержащую все элементы текущей карты.
+
+// Проверка наличия ключа: Метод Exists(key string) bool,
+//  который проверяет, существует ли ключ в карте.
+
+// Получение значения: Метод Get(key string) (int, bool),
+//  который возвращает значение по ключу и булевый флаг,
+//  указывающий на успешность операции.
+
+// Напишите unit тесты к созданным функциям
+
+func NewStringIntMap() *StringIntMap <span class="cov8" title="1">{
+        return &amp;StringIntMap{
+                data: make(map[string]int),
+        }
+}</span>
+
+type StringIntMap struct {
+        data map[string]int
+}
+
+func (m *StringIntMap) Add(key string, value int) <span class="cov8" title="1">{
+        m.data[key] = value
+}</span>
+
+func (m *StringIntMap) Remove(key string) <span class="cov8" title="1">{
+        delete(m.data, key)
+}</span>
+
+func (m *StringIntMap) Copy() map[string]int <span class="cov8" title="1">{
+        copyMap := make(map[string]int)
+        for k, v := range m.data </span><span class="cov8" title="1">{
+                copyMap[k] = v
+        }</span>
+        <span class="cov8" title="1">return copyMap</span>
+}
+
+func (m *StringIntMap) Exists(key string) bool <span class="cov8" title="1">{
+        _, exists := m.data[key]
+        return exists
+}</span>
+
+func (m *StringIntMap) Get(key string) (int, bool) <span class="cov8" title="1">{
+        value, exists := m.data[key]
+        return value, exists
+}</span>
+
+func main() <span class="cov0" title="0">{
+        sim := NewStringIntMap()
+        sim.Add("one", 1)
+        sim.Add("two", 2)
+
+        value, exists := sim.Get("one")
+        if exists </span><span class="cov0" title="0">{
+                println("Value for 'one':", value)
+        }</span> else<span class="cov0" title="0"> {
+                println("'one' does not exist")
+        }</span>
+        <span class="cov0" title="0">sim.Remove("one")
+        exists = sim.Exists("one")
+        if exists </span><span class="cov0" title="0">{
+                println("'one' still exists")
+        }</span> else<span class="cov0" title="0"> {
+                println("'one' has been removed")
+        }</span>
+
+        <span class="cov0" title="0">copyMap := sim.Copy()
+        for k, v := range copyMap </span><span class="cov0" title="0">{
+                println("Copy - Key:", k, "Value:", v)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">// Задание 4
+// На вход подаются два неупорядоченных слайса строк. Например:
+
+// slice1 := []string{"apple", "banana", "cherry", "date", "43", "lead", "gno1"}
+// slice2 := []string{"banana", "date", "fig"}
+// Напишите функцию, которая возвращает слайс строк, содержащий элементы, которые есть в первом слайсе, но отсутствуют во втором.
+
+// Напишите unit тесты к созданным функциям
+package main
+
+import "fmt"
+
+func difference(slice1, slice2 []string) []string <span class="cov8" title="1">{
+        excluded := make(map[string]struct{}, len(slice2))
+        for _, str := range slice2 </span><span class="cov8" title="1">{
+                excluded[str] = struct{}{}
+        }</span>
+
+        <span class="cov8" title="1">result := make([]string, 0, len(slice1))
+        for _, str1 := range slice1 </span><span class="cov8" title="1">{
+                if _, found := excluded[str1]; !found </span><span class="cov8" title="1">{
+                        result = append(result, str1)
+                }</span>
+        }
+        <span class="cov8" title="1">return result</span>
+}
+
+func main() <span class="cov0" title="0">{
+        slice1 := []string{"apple", "banana", "cherry", "date", "43", "lead", "gno1"}
+        slice2 := []string{"banana", "date", "fig"}
+        result := difference(slice1, slice2)
+        fmt.Println("Difference:", result)
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">// Задание 5
+// На вход подаются два неупорядоченных слайса int любой длины. Например:
+
+// a := []int{65, 3, 58, 678, 64}
+// b := []int{64, 2, 3, 43}
+// Напишите функцию, которая проверяет, есть ли
+// пересечения значений между двумя слайсами и возвращает:
+
+// bool значение есть ли хотя бы одно пересечение
+// в значениях входных срезов
+// срез []int с пересеченными значениями (если таких значений нет,
+// то возвращать пустой срез). Т. е. если взать слайсы a и b из премере,
+// то вернет true, []int{64, 3}.
+// Напишите unit тесты к созданным функциям
+
+package main
+
+import "fmt"
+
+func difference(slice1, slice2 []int) (bool, []int) <span class="cov8" title="1">{
+        intersection := make(map[int]struct{})
+        for _, v := range slice1 </span><span class="cov8" title="1">{
+                intersection[v] = struct{}{}
+        }</span>
+
+        <span class="cov8" title="1">hasIntersection := false
+        result := make([]int, 0)
+
+        for _, v := range slice2 </span><span class="cov8" title="1">{
+                if _, found := intersection[v]; found </span><span class="cov8" title="1">{
+                        hasIntersection = true
+                        result = append(result, v)
+                }</span>
+        }
+
+        <span class="cov8" title="1">return hasIntersection, result</span>
+}
+
+func main() <span class="cov0" title="0">{
+        a := []int{65, 3, 58, 678, 64}
+        b := []int{64, 2, 3, 43}
+
+        hasIntersection, intersection := difference(a, b)
+        fmt.Println("Has intersection:", hasIntersection)
+        fmt.Println("Intersection values:", intersection)
+}</span>
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">// Задание 6
+// Напишите генератор случайных чисел используя небуфферизированный канал.
+
+// Напишите unit тесты к созданным функциям
+
+package main
+
+import (
+        "fmt"
+        "math/rand"
+)
+
+func main() <span class="cov0" title="0">{
+        randomNumbers := generateRandomNumbers(10)
+        for num := range randomNumbers </span><span class="cov0" title="0">{
+                fmt.Println(num)
+        }</span>
+}
+
+func generateRandomNumbers(count int) &lt;-chan int <span class="cov8" title="1">{
+        ch := make(chan int)
+        go func() </span><span class="cov8" title="1">{
+                defer close(ch)
+                for i := 0; i &lt; count; i++ </span><span class="cov8" title="1">{
+                        ch &lt;- rand.Intn(100) // ^_^ число от 0 до 99
+                }</span>
+        }()
+        <span class="cov8" title="1">return ch</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
