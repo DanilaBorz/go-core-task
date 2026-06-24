@@ -1,8 +1,11 @@
 package main
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
-func TestWaitGroup(t *testing.T) {
+func TestWaitGroupWaitsForAllTasks(t *testing.T) {
 	wg := NewWaitGroup()
 	wg.Add(3)
 
@@ -34,6 +37,31 @@ func TestWaitGroup(t *testing.T) {
 	}
 }
 
+func TestWaitGroupBlocksUntilDone(t *testing.T) {
+	wg := NewWaitGroup()
+	wg.Add(1)
+
+	waited := make(chan struct{})
+	go func() {
+		wg.Wait()
+		close(waited)
+	}()
+
+	select {
+	case <-waited:
+		t.Fatal("Wait returned before Done was called")
+	case <-time.After(20 * time.Millisecond):
+	}
+
+	wg.Done()
+
+	select {
+	case <-waited:
+	case <-time.After(time.Second):
+		t.Fatal("Wait did not return after Done was called")
+	}
+}
+
 func TestWaitGroupWithNoTasks(t *testing.T) {
 	wg := NewWaitGroup()
 	wg.Wait() // Ожидаем, что не будет блокировки
@@ -41,37 +69,20 @@ func TestWaitGroupWithNoTasks(t *testing.T) {
 	// Если мы дошли до этого момента, значит тест прошел успешно
 }
 
-func TestWaitGroupDoneWithNoTasks(t *testing.T) {
+func TestWaitGroupDoneWithNoTasksDoesNotBlock(t *testing.T) {
 	wg := NewWaitGroup()
 	wg.Done() // Ожидаем, что вызов Done без задач не вызовет панику
 	wg.Wait() // И после этого Wait не должен блокироваться
 }
 
-func TestWaitGroupWithMoreTasksThanAdded(t *testing.T) {
+func TestWaitGroupIgnoresExtraDoneCalls(t *testing.T) {
 	wg := NewWaitGroup()
 	wg.Add(2)
 
-	done := make(chan struct{}, 2)
-	go func() {
-		defer wg.Done()
-		done <- struct{}{}
-	}()
-
-	go func() {
-		defer wg.Done()
-		done <- struct{}{}
-	}()
-
+	wg.Done()
+	wg.Done()
+	wg.Done()
 	wg.Wait()
-
-	for i := 0; i < 2; i++ {
-		select {
-		case <-done:
-			// Получили сигнал о завершении задачи
-		default:
-			t.Errorf("Expected all tasks to be done, but some are still pending")
-		}
-	}
 }
 
 func TestWaitGroupWithNegativeDelta(t *testing.T) {

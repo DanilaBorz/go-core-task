@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 // Задание 9
 // Сделать конвейер чисел Даны два канала.
 // В первый пишутся числа типа uint8. Нужно, чтобы
@@ -38,6 +40,9 @@ func main() {
 	float64Chan := make(chan float64)
 
 	go uint8Generator(uint8Chan, 1, 2, 3, 4, 5)
-	go uint8ToFloat64(uint8Chan, float64Chan)
 	go cubePipeline(uint8Chan, float64Chan)
+
+	for result := range float64Chan {
+		fmt.Println(result)
+	}
 }

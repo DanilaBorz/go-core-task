@@ -5,18 +5,27 @@
 
 package main
 
-import "sync"
-
 func NewWaitGroup() *WaitGroup {
-	return &WaitGroup{
+	wg := &WaitGroup{
+		sem:  make(chan struct{}, 1),
 		done: make(chan struct{}),
 	}
+	wg.sem <- struct{}{}
+	return wg
 }
 
 type WaitGroup struct {
-	mu    sync.Mutex
+	sem   chan struct{}
 	count int
 	done  chan struct{}
+}
+
+func (wg *WaitGroup) lock() {
+	<-wg.sem
+}
+
+func (wg *WaitGroup) unlock() {
+	wg.sem <- struct{}{}
 }
 
 func (wg *WaitGroup) Add(delta int) {
@@ -24,8 +33,8 @@ func (wg *WaitGroup) Add(delta int) {
 		return
 	}
 
-	wg.mu.Lock()
-	defer wg.mu.Unlock()
+	wg.lock()
+	defer wg.unlock()
 
 	if wg.count == 0 {
 		wg.done = make(chan struct{})
@@ -34,8 +43,8 @@ func (wg *WaitGroup) Add(delta int) {
 }
 
 func (wg *WaitGroup) Done() {
-	wg.mu.Lock()
-	defer wg.mu.Unlock()
+	wg.lock()
+	defer wg.unlock()
 
 	if wg.count == 0 {
 		return
@@ -48,10 +57,10 @@ func (wg *WaitGroup) Done() {
 }
 
 func (wg *WaitGroup) Wait() {
-	wg.mu.Lock()
+	wg.lock()
 	done := wg.done
 	count := wg.count
-	wg.mu.Unlock()
+	wg.unlock()
 
 	if count == 0 {
 		return
